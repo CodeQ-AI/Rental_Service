@@ -1,60 +1,50 @@
 {% extends 'base.html' %}
-
 {% block title %}Удалить «{{ item.title }}»{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-6 col-md-8">
-
-    <div class="card border-danger shadow-sm">
-      <div class="card-header bg-danger text-white fw-semibold">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i>Подтверждение удаления
-      </div>
-
-      <div class="card-body p-4">
-
-        <div class="d-flex gap-4 align-items-start mb-4">
-          {% if item.photo %}
-            <img src="{{ item.photo.url }}" class="rounded shadow-sm"
-                 style="width:100px;height:80px;object-fit:cover;" alt="{{ item.title }}">
-          {% else %}
-            <div class="bg-secondary rounded d-flex align-items-center justify-content-center flex-shrink-0"
-                 style="width:100px;height:80px;">
-              <i class="bi bi-image text-white fs-3"></i>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-5 col-md-7">
+      <div class="card border-0 shadow overflow-hidden">
+        <div class="p-3 d-flex align-items-center gap-2"
+             style="background:#fef2f2;border-bottom:1.5px solid #fecaca;">
+          <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+          <span class="fw-700 text-danger">Подтверждение удаления</span>
+        </div>
+        <div class="card-body p-4">
+          <div class="d-flex gap-3 align-items-start mb-4">
+            {% if item.photo %}
+              <img src="{{ item.photo.url }}" class="rounded-3 flex-shrink-0"
+                   style="width:90px;height:70px;object-fit:cover;" alt="">
+            {% else %}
+              <div class="rounded-3 flex-shrink-0 d-flex align-items-center justify-content-center"
+                   style="width:90px;height:70px;background:#f1f5f9;">
+                <i class="bi bi-image text-muted fs-4"></i>
+              </div>
+            {% endif %}
+            <div>
+              <h6 class="fw-700 mb-1">{{ item.title }}</h6>
+              <p class="text-muted small mb-0">
+                <i class="bi bi-tag me-1"></i>{{ item.price|floatformat:0 }} ₸/сут
+              </p>
             </div>
-          {% endif %}
-
-          <div>
-            <h5 class="fw-bold mb-1">{{ item.title }}</h5>
-            <p class="text-muted small mb-1">
-              <i class="bi bi-tag me-1"></i>{{ item.price }} ₸/сут
-            </p>
-            <p class="text-muted small mb-0">
-              <i class="bi bi-clock me-1"></i>{{ item.created_at|date:"d.m.Y" }}
-            </p>
           </div>
+          <div class="alert py-2 mb-4 d-flex gap-2 align-items-center"
+               style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:10px;">
+            <i class="bi bi-info-circle text-warning flex-shrink-0"></i>
+            <span class="small">Объект будет <strong>скрыт</strong> из каталога, но останется в базе данных.</span>
+          </div>
+          <form method="post" class="d-flex gap-2">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger px-4">
+              <i class="bi bi-trash me-1"></i>Удалить
+            </button>
+            <a href="{% url 'rentals:item_detail' pk=item.pk %}"
+               class="btn btn-outline-secondary px-4">Отмена</a>
+          </form>
         </div>
-
-        <div class="alert alert-warning py-2">
-          <i class="bi bi-info-circle me-2"></i>
-          Объект будет <strong>скрыт из каталога</strong>, но не удалён из базы данных.
-          Восстановить его можно через панель администратора.
-        </div>
-
-        <form method="post" class="d-flex gap-2 mt-3">
-          {% csrf_token %}
-          <button type="submit" class="btn btn-danger px-4">
-            <i class="bi bi-trash me-1"></i>Да, удалить
-          </button>
-          <a href="{% url 'rentals:item_detail' pk=item.pk %}"
-             class="btn btn-outline-secondary px-4">
-            <i class="bi bi-x-lg me-1"></i>Отмена
-          </a>
-        </form>
-
       </div>
     </div>
-
   </div>
 </div>
 {% endblock %}

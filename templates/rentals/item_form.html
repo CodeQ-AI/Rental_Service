@@ -1,37 +1,29 @@
 {% extends 'base.html' %}
-
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-lg-7 col-md-9">
-
-    <nav aria-label="breadcrumb" class="mb-4">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">
-          <a href="{% url 'rentals:item_list' %}">Каталог</a>
-        </li>
-        {% if item %}
-        <li class="breadcrumb-item">
-          <a href="{% url 'rentals:item_detail' pk=item.pk %}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-        <li class="breadcrumb-item active">{{ title }}</li>
-      </ol>
-    </nav>
-
-    <div class="card shadow-sm">
-      <div class="card-header bg-white fw-semibold fs-5">
-        <i class="bi bi-house-add me-2 text-primary"></i>{{ title }}
-      </div>
-
-      <div class="card-body p-4">
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'rentals:item_list' %}">Каталог</a></li>
+          {% if item %}
+          <li class="breadcrumb-item">
+            <a href="{% url 'rentals:item_detail' pk=item.pk %}">{{ item.title|truncatechars:30 }}</a>
+          </li>
+          {% endif %}
+          <li class="breadcrumb-item active">{{ title }}</li>
+        </ol>
+      </nav>
+      <div class="card p-4">
+        <h5 class="fw-700 mb-4">
+          <i class="bi bi-house-add me-2 text-primary"></i>{{ title }}
+        </h5>
         <form method="post" enctype="multipart/form-data" novalidate>
           {% csrf_token %}
-
-          <!-- Title -->
           <div class="mb-3">
-            <label class="form-label fw-semibold" for="{{ form.title.id_for_label }}">
+            <label class="form-label" for="{{ form.title.id_for_label }}">
               {{ form.title.label }} <span class="text-danger">*</span>
             </label>
             {{ form.title }}
@@ -39,56 +31,44 @@
               <div class="invalid-feedback d-block">{{ form.title.errors|join:", " }}</div>
             {% endif %}
           </div>
-
-          <!-- Description -->
           <div class="mb-3">
-            <label class="form-label fw-semibold" for="{{ form.description.id_for_label }}">
-              {{ form.description.label }}
-            </label>
+            <label class="form-label">{{ form.description.label }}</label>
             {{ form.description }}
             {% if form.description.errors %}
               <div class="invalid-feedback d-block">{{ form.description.errors|join:", " }}</div>
             {% endif %}
           </div>
-
-          <!-- Price -->
           <div class="mb-3">
-            <label class="form-label fw-semibold" for="{{ form.price.id_for_label }}">
+            <label class="form-label">
               {{ form.price.label }} <span class="text-danger">*</span>
             </label>
             <div class="input-group">
               {{ form.price }}
-              <span class="input-group-text">₸/сут</span>
+              <span class="input-group-text fw-600">₸/сут</span>
             </div>
             {% if form.price.errors %}
               <div class="invalid-feedback d-block">{{ form.price.errors|join:", " }}</div>
             {% endif %}
           </div>
-
-          <!-- Photo -->
           <div class="mb-4">
-            <label class="form-label fw-semibold" for="{{ form.photo.id_for_label }}">
-              {{ form.photo.label }}
-            </label>
+            <label class="form-label">{{ form.photo.label }}</label>
             {% if item.photo %}
             <div class="mb-2">
-              <img src="{{ item.photo.url }}" class="rounded"
-                   style="height:100px;object-fit:cover;" alt="Текущее фото">
-              <p class="text-muted small mt-1">Загрузите новое фото, чтобы заменить текущее.</p>
+              <img src="{{ item.photo.url }}" class="rounded shadow-sm"
+                   style="height:90px;object-fit:cover;" alt="">
+              <p class="text-muted small mt-1 mb-0">Загрузите новое фото для замены</p>
             </div>
             {% endif %}
             {{ form.photo }}
+            <div class="form-text">JPEG, PNG, WEBP · макс. 5 МБ</div>
             {% if form.photo.errors %}
               <div class="invalid-feedback d-block">{{ form.photo.errors|join:", " }}</div>
             {% endif %}
-            <div class="form-text">Форматы: JPEG, PNG, WEBP. Макс. размер: 5 МБ.</div>
           </div>
-
-          <!-- Actions -->
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary px-4">
               <i class="bi bi-check-lg me-1"></i>
-              {% if item %}Сохранить изменения{% else %}Добавить объект{% endif %}
+              {% if item %}Сохранить{% else %}Добавить{% endif %}
             </button>
             {% if item %}
               <a href="{% url 'rentals:item_detail' pk=item.pk %}"
@@ -98,11 +78,9 @@
                  class="btn btn-outline-secondary">Отмена</a>
             {% endif %}
           </div>
-
         </form>
       </div>
     </div>
-
   </div>
 </div>
 {% endblock %}

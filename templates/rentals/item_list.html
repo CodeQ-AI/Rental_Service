@@ -1,118 +1,127 @@
 {% extends 'base.html' %}
-
-{% block title %}Каталог аренды{% endblock %}
+{% block title %}Каталог объектов{% endblock %}
 
 {% block content %}
-<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
-  <h2 class="fw-bold mb-0"><i class="bi bi-grid me-2"></i>Каталог объектов</h2>
 
-  <!-- Сортировка -->
-  <form method="get" class="d-flex align-items-center gap-2">
-    <label class="text-muted small mb-0" for="sortSelect">Сортировка:</label>
-    <select id="sortSelect" name="sort" class="form-select form-select-sm w-auto"
-            onchange="this.form.submit()">
-      {% for value, label in sort_fields %}
-        <option value="{{ value }}" {% if sort == value %}selected{% endif %}>
-          {{ label }}
-        </option>
-      {% endfor %}
-    </select>
-  </form>
-
-  {% if user.is_authenticated %}
-  <a href="{% url 'rentals:item_create' %}" class="btn btn-primary btn-sm">
-    <i class="bi bi-plus-circle me-1"></i>Добавить объект
-  </a>
-  {% endif %}
+<!-- Hero -->
+<div class="page-hero">
+  <div class="container position-relative">
+    <h1 class="mb-2">Каталог объектов аренды</h1>
+    <p class="mb-0">Найдите идеальное жильё для проживания в Алматы</p>
+  </div>
 </div>
 
-{% if page_obj.object_list %}
-<div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-  {% for item in page_obj %}
-  <div class="col">
-    <div class="card h-100 shadow-sm">
-      {% if item.photo %}
-        <img src="{{ item.photo.url }}" class="card-img-top"
-             alt="{{ item.title }}" style="height:200px;object-fit:cover;">
-      {% else %}
-        <div class="bg-secondary d-flex align-items-center justify-content-center"
-             style="height:200px;">
-          <i class="bi bi-image text-white" style="font-size:3rem;"></i>
-        </div>
+<div class="container pb-5">
+
+  <!-- Toolbar -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <p class="text-muted mb-0 small fw-500">
+      Найдено объектов: <strong>{{ page_obj.paginator.count }}</strong>
+    </p>
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <form method="get" class="d-flex align-items-center gap-2">
+        <label class="text-muted small mb-0 fw-600">Сортировка:</label>
+        <select name="sort" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
+          {% for value, label in sort_fields %}
+            <option value="{{ value }}" {% if sort == value %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </form>
+      {% if user.is_authenticated %}
+      <a href="{% url 'rentals:item_create' %}" class="btn btn-primary btn-sm px-3">
+        <i class="bi bi-plus-lg me-1"></i>Добавить
+      </a>
       {% endif %}
-
-      <div class="card-body d-flex flex-column">
-        <h5 class="card-title fw-semibold">{{ item.title }}</h5>
-        <p class="card-text text-muted small flex-grow-1">
-          {{ item.description|truncatechars:100 }}
-        </p>
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <span class="fw-bold text-primary fs-5">
-            {{ item.price }} ₸<span class="text-muted fw-normal fs-6">/сут</span>
-          </span>
-          <a href="{% url 'rentals:item_detail' pk=item.pk %}"
-             class="btn btn-outline-primary btn-sm">
-            Подробнее <i class="bi bi-arrow-right ms-1"></i>
-          </a>
-        </div>
-      </div>
-
-      <div class="card-footer text-muted small d-flex align-items-center gap-1">
-        <i class="bi bi-person-circle"></i>
-        {{ item.owner.get_full_name }}
-        <span class="ms-auto">
-          <i class="bi bi-clock me-1"></i>{{ item.created_at|date:"d.m.Y" }}
-        </span>
-      </div>
     </div>
   </div>
-  {% endfor %}
-</div>
 
-<!-- Пагинация -->
-{% if page_obj.has_other_pages %}
-<nav class="mt-5 d-flex justify-content-center" aria-label="Пагинация">
-  <ul class="pagination">
+  {% if page_obj.object_list %}
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-4">
+    {% for item in page_obj %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="position-relative overflow-hidden" style="height:210px;border-radius:14px 14px 0 0;">
+          {% if item.photo %}
+            <img src="{{ item.photo.url }}" class="w-100 h-100"
+                 style="object-fit:cover;transition:transform .35s;"
+                 onmouseover="this.style.transform='scale(1.04)'"
+                 onmouseout="this.style.transform='scale(1)'"
+                 alt="{{ item.title }}">
+          {% else %}
+            <div class="w-100 h-100 d-flex align-items-center justify-content-center"
+                 style="background:linear-gradient(135deg,#1e293b,#334155);">
+              <i class="bi bi-image" style="font-size:3rem;color:rgba(255,255,255,.2);"></i>
+            </div>
+          {% endif %}
+          <div class="position-absolute bottom-0 start-0 m-2">
+            <span class="badge text-white fw-700 px-2 py-1"
+                  style="background:rgba(15,23,42,.7);backdrop-filter:blur(6px);font-size:.82rem;border-radius:8px;">
+              {{ item.price|floatformat:0 }} ₸/сут
+            </span>
+          </div>
+        </div>
 
-    <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-      <a class="page-link"
-         href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}">
-        <i class="bi bi-chevron-left"></i>
-      </a>
-    </li>
-
-    {% for num in page_obj.paginator.page_range %}
-      {% if page_obj.number == num %}
-        <li class="page-item active">
-          <span class="page-link">{{ num }}</span>
-        </li>
-      {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-        <li class="page-item">
-          <a class="page-link" href="?page={{ num }}&sort={{ sort }}">{{ num }}</a>
-        </li>
-      {% endif %}
+        <div class="card-body d-flex flex-column p-3">
+          <h5 class="fw-700 mb-1" style="font-size:.97rem;line-height:1.35;">
+            {{ item.title }}
+          </h5>
+          <p class="text-muted mb-3 flex-grow-1" style="font-size:.82rem;line-height:1.6;">
+            {{ item.description|truncatechars:90 }}
+          </p>
+          <div class="d-flex align-items-center justify-content-between">
+            <span class="text-muted" style="font-size:.78rem;">
+              <i class="bi bi-person-circle me-1"></i>{{ item.owner.get_full_name }}
+            </span>
+            <a href="{% url 'rentals:item_detail' pk=item.pk %}"
+               class="btn btn-outline-primary btn-sm px-3">
+              Подробнее <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
     {% endfor %}
+  </div>
 
-    <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-      <a class="page-link"
-         href="?page={{ page_obj.next_page_number }}&sort={{ sort }}">
-        <i class="bi bi-chevron-right"></i>
-      </a>
-    </li>
-
-  </ul>
-</nav>
-{% endif %}
-
-{% else %}
-<div class="text-center py-5 text-muted">
-  <i class="bi bi-inbox" style="font-size:4rem;"></i>
-  <p class="mt-3 fs-5">Объектов пока нет.</p>
-  {% if user.is_authenticated %}
-  <a href="{% url 'rentals:item_create' %}" class="btn btn-primary mt-2">
-    <i class="bi bi-plus-circle me-1"></i>Добавить первый объект
-  </a>
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <nav class="d-flex justify-content-center mt-5">
+    <ul class="pagination gap-1 mb-0">
+      <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+        <a class="page-link px-3" href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+      </li>
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <li class="page-item active"><span class="page-link px-3">{{ num }}</span></li>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link px-3" href="?page={{ num }}&sort={{ sort }}">{{ num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+        <a class="page-link px-3" href="?page={{ page_obj.next_page_number }}&sort={{ sort }}">
+          <i class="bi bi-chevron-right"></i>
+        </a>
+      </li>
+    </ul>
+  </nav>
   {% endif %}
+
+  {% else %}
+  <div class="empty-state">
+    <i class="bi bi-house-slash empty-icon"></i>
+    <h5 class="fw-700 mb-2">Объектов пока нет</h5>
+    <p class="mb-4">Станьте первым, кто разместит объект аренды</p>
+    {% if user.is_authenticated %}
+    <a href="{% url 'rentals:item_create' %}" class="btn btn-primary px-4">
+      <i class="bi bi-plus-lg me-1"></i>Добавить объект
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+
 </div>
-{% endif %}
 {% endblock %}
