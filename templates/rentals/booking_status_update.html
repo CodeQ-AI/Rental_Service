@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Изменить статус брони{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold fs-5">
+        <i class="bi bi-arrow-repeat me-2 text-primary"></i>Изменить статус бронирования
+      </div>
+      <div class="card-body p-4">
+
+        <ul class="list-unstyled text-muted small mb-4">
+          <li><i class="bi bi-house me-2"></i>{{ booking.item.title }}</li>
+          <li><i class="bi bi-person me-2"></i>{{ booking.renter.get_full_name }}</li>
+          <li><i class="bi bi-calendar me-2"></i>
+            {{ booking.date_start|date:"d.m.Y" }} — {{ booking.date_end|date:"d.m.Y" }}
+          </li>
+          <li class="mt-2">
+            Текущий статус:
+            <strong>{{ booking.get_status_display }}</strong>
+          </li>
+        </ul>
+
+        <form method="post">
+          {% csrf_token %}
+          <p class="fw-semibold mb-2">Выберите новый статус:</p>
+          <div class="d-flex flex-wrap gap-2">
+            {% for status in available %}
+            <button type="submit" name="status" value="{{ status }}"
+                    class="btn {% if status == 'confirmed' %}btn-success
+                               {% elif status == 'cancelled' %}btn-danger
+                               {% elif status == 'completed' %}btn-secondary
+                               {% else %}btn-outline-primary{% endif %}">
+              {% if status == 'confirmed' %}<i class="bi bi-check-circle me-1"></i>Подтвердить
+              {% elif status == 'cancelled' %}<i class="bi bi-x-circle me-1"></i>Отменить
+              {% elif status == 'completed' %}<i class="bi bi-flag me-1"></i>Завершить
+              {% else %}{{ status }}{% endif %}
+            </button>
+            {% empty %}
+            <p class="text-muted">Нет доступных переходов.</p>
+            {% endfor %}
+          </div>
+        </form>
+
+        <a href="{% url 'rentals:owner_bookings' %}"
+           class="btn btn-outline-secondary btn-sm mt-4">
+          <i class="bi bi-arrow-left me-1"></i>Назад
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

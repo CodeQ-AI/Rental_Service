@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="{% url 'accounts:profile' pk=profile_user.pk %}">Профиль</a>
+        </li>
+        <li class="breadcrumb-item active">Редактировать</li>
+      </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+      <div class="card-header bg-white fw-semibold fs-5">
+        <i class="bi bi-pencil-square me-2 text-primary"></i>Редактировать профиль
+      </div>
+      <div class="card-body p-4">
+
+        <form method="post" enctype="multipart/form-data" novalidate>
+          {% csrf_token %}
+
+          <!-- Текущий аватар -->
+          {% if profile_user.avatar %}
+          <div class="mb-3 text-center">
+            <img src="{{ profile_user.avatar.url }}"
+                 class="rounded-circle shadow-sm mb-2"
+                 style="width:80px;height:80px;object-fit:cover;"
+                 alt="Текущий аватар">
+            <p class="text-muted small">Текущий аватар</p>
+          </div>
+          {% endif %}
+
+          {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold" for="{{ field.id_for_label }}">
+              {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|join:", " }}</div>
+            {% endif %}
+            {% if field.help_text %}
+              <div class="form-text">{{ field.help_text }}</div>
+            {% endif %}
+          </div>
+          {% endfor %}
+
+          <div class="d-flex gap-2 mt-4">
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-check-lg me-1"></i>Сохранить
+            </button>
+            <a href="{% url 'accounts:profile' pk=profile_user.pk %}"
+               class="btn btn-outline-secondary">Отмена</a>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
