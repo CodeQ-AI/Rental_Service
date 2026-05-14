@@ -64,15 +64,13 @@ WSGI_APPLICATION = 'rental_service.wsgi.application'
 
 # Database — PostgreSQL
 
+import dj_database_url
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'rental_db'),
-        'USER': os.environ.get('DB_USER', 'rental_user'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'rental_pass'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '5432'),
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600
+    )
 }
 
 
