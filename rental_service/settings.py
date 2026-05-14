@@ -68,11 +68,10 @@ import dj_database_url
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='sqlite:///db.sqlite3',
+        default='postgresql://rental_user:YWiaDVf4IpfRYYAgsQyTp7pKc6Eo1oRN@dpg-d82rjcv2gups7397rj3g-a.oregon-postgres.render.com/rental_db_t8bj',
         conn_max_age=600
     )
 }
-
 
 # Custom User
 
