@@ -1,5 +1,5 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8"/>
@@ -12,21 +12,19 @@
 
   <style>
     :root {
-      --primary:    #2563eb;
-      --primary-d:  #1d4ed8;
-      --accent:     #f59e0b;
-      --dark:       #0f172a;
-      --dark2:      #1e293b;
-      --surface:    #ffffff;
-      --muted:      #64748b;
-      --border:     #e2e8f0;
-      --radius:     14px;
-      --shadow:     0 4px 24px rgba(15,23,42,.08);
-      --shadow-lg:  0 8px 40px rgba(15,23,42,.14);
+      --primary:   #2563eb;
+      --primary-d: #1d4ed8;
+      --accent:    #f59e0b;
+      --dark:      #0f172a;
+      --dark2:     #1e293b;
+      --surface:   #ffffff;
+      --muted:     #64748b;
+      --border:    #e2e8f0;
+      --radius:    14px;
+      --shadow:    0 4px 24px rgba(15,23,42,.08);
+      --shadow-lg: 0 8px 40px rgba(15,23,42,.14);
     }
-
     *, *::before, *::after { box-sizing: border-box; }
-
     body {
       font-family: 'Manrope', sans-serif;
       background: #f1f5f9;
@@ -35,19 +33,13 @@
       display: flex;
       flex-direction: column;
     }
-
     main { flex: 1; }
-
-    /* ── NAVBAR ── */
     .navbar {
       background: var(--dark) !important;
-      padding: 0 0;
+      padding: 0;
       border-bottom: 1px solid rgba(255,255,255,.06);
-      backdrop-filter: blur(12px);
     }
-
     .navbar .container { height: 64px; }
-
     .navbar-brand {
       font-family: 'Unbounded', sans-serif;
       font-weight: 700;
@@ -58,7 +50,6 @@
       align-items: center;
       gap: 8px;
     }
-
     .navbar-brand .brand-icon {
       width: 34px; height: 34px;
       background: var(--primary);
@@ -66,9 +57,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: .9rem;
     }
-
     .navbar-brand span { color: var(--accent); }
-
     .nav-link {
       color: rgba(255,255,255,.65) !important;
       font-size: .875rem;
@@ -77,12 +66,10 @@
       border-radius: 8px;
       transition: all .18s;
     }
-
     .nav-link:hover, .nav-link.active {
       color: #fff !important;
       background: rgba(255,255,255,.08);
     }
-
     .btn-nav-primary {
       background: var(--primary);
       color: #fff !important;
@@ -92,9 +79,7 @@
       border-radius: 8px;
       transition: background .18s;
     }
-
     .btn-nav-primary:hover { background: var(--primary-d) !important; }
-
     .dropdown-menu {
       background: var(--dark2);
       border: 1px solid rgba(255,255,255,.08);
@@ -103,7 +88,6 @@
       box-shadow: var(--shadow-lg);
       min-width: 200px;
     }
-
     .dropdown-item {
       color: rgba(255,255,255,.75);
       border-radius: 8px;
@@ -111,22 +95,15 @@
       padding: .5rem .75rem;
       transition: all .15s;
     }
-
-    .dropdown-item:hover {
-      background: rgba(255,255,255,.08);
-      color: #fff;
-    }
-
+    .dropdown-item:hover { background: rgba(255,255,255,.08); color: #fff; }
     .dropdown-item.text-danger:hover { background: rgba(239,68,68,.15); }
     .dropdown-divider { border-color: rgba(255,255,255,.08); }
-
     .avatar-nav {
       width: 30px; height: 30px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid rgba(255,255,255,.2);
     }
-
     .avatar-placeholder {
       width: 30px; height: 30px;
       border-radius: 50%;
@@ -137,16 +114,12 @@
       color: #fff;
       flex-shrink: 0;
     }
-
-    /* ── ALERTS ── */
     .alert {
       border: none;
       border-radius: var(--radius);
       font-size: .875rem;
       font-weight: 500;
     }
-
-    /* ── CARDS ── */
     .card {
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -154,39 +127,22 @@
       transition: box-shadow .2s, transform .2s;
       background: var(--surface);
     }
-
     .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
-
     .card-header {
       border-bottom: 1px solid var(--border);
       border-radius: var(--radius) var(--radius) 0 0 !important;
       background: var(--surface) !important;
       padding: 1rem 1.25rem;
     }
-
-    /* ── BUTTONS ── */
-    .btn {
-      border-radius: 9px;
-      font-weight: 600;
-      font-size: .875rem;
-      transition: all .18s;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
+    .btn { border-radius: 9px; font-weight: 600; font-size: .875rem; transition: all .18s; }
+    .btn-primary { background: var(--primary); border-color: var(--primary); }
     .btn-primary:hover {
       background: var(--primary-d);
       border-color: var(--primary-d);
       transform: translateY(-1px);
     }
-
     .btn-outline-primary { border-color: var(--primary); color: var(--primary); }
     .btn-outline-primary:hover { background: var(--primary); transform: translateY(-1px); }
-
-    /* ── FORMS ── */
     .form-control, .form-select {
       border-radius: 9px;
       border: 1.5px solid var(--border);
@@ -194,18 +150,12 @@
       padding: .55rem .85rem;
       transition: border-color .15s, box-shadow .15s;
     }
-
     .form-control:focus, .form-select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(37,99,235,.12);
     }
-
     .form-label { font-weight: 600; font-size: .875rem; color: #374151; }
-
-    /* ── BADGES ── */
     .badge { border-radius: 6px; font-weight: 600; font-size: .75rem; }
-
-    /* ── PAGINATION ── */
     .page-link {
       border-radius: 8px !important;
       border: 1.5px solid var(--border);
@@ -214,24 +164,15 @@
       font-weight: 600;
       font-size: .875rem;
     }
-
-    .page-item.active .page-link {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-
-    /* ── FOOTER ── */
+    .page-item.active .page-link { background: var(--primary); border-color: var(--primary); }
     footer {
       background: var(--dark);
       color: rgba(255,255,255,.45);
       font-size: .82rem;
       padding: 1.25rem 0;
     }
-
     footer a { color: rgba(255,255,255,.55); text-decoration: none; }
     footer a:hover { color: #fff; }
-
-    /* ── HERO (каталог) ── */
     .page-hero {
       background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
       padding: 3rem 0 2.5rem;
@@ -239,14 +180,12 @@
       position: relative;
       overflow: hidden;
     }
-
     .page-hero::before {
       content: '';
       position: absolute;
       inset: 0;
       background: radial-gradient(ellipse at 70% 50%, rgba(37,99,235,.18) 0%, transparent 70%);
     }
-
     .page-hero h1 {
       font-family: 'Unbounded', sans-serif;
       font-size: clamp(1.4rem, 3vw, 2rem);
@@ -254,10 +193,7 @@
       color: #fff;
       letter-spacing: -.03em;
     }
-
     .page-hero p { color: rgba(255,255,255,.55); }
-
-    /* ── TABLE ── */
     .table { border-radius: var(--radius); overflow: hidden; }
     .table thead th {
       background: var(--dark);
@@ -269,30 +205,13 @@
       border: none;
       padding: .85rem 1rem;
     }
-
     .table tbody td { padding: .85rem 1rem; vertical-align: middle; border-color: var(--border); }
     .table-hover tbody tr:hover { background: #f8fafc; }
-
-    /* ── BREADCRUMB ── */
     .breadcrumb { font-size: .82rem; }
     .breadcrumb-item a { color: var(--primary); text-decoration: none; }
     .breadcrumb-item.active { color: var(--muted); }
-
-    /* ── EMPTY STATE ── */
-    .empty-state {
-      text-align: center;
-      padding: 5rem 1rem;
-      color: var(--muted);
-    }
-
-    .empty-state .empty-icon {
-      font-size: 4rem;
-      opacity: .3;
-      display: block;
-      margin-bottom: 1rem;
-    }
-
-    /* ── SCROLLBAR ── */
+    .empty-state { text-align: center; padding: 5rem 1rem; color: var(--muted); }
+    .empty-state .empty-icon { font-size: 4rem; opacity: .3; display: block; margin-bottom: 1rem; }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
@@ -303,7 +222,7 @@
 
 <body>
 
-<!-- ════════════════ NAVBAR ════════════════ -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
   <div class="container d-flex align-items-center">
 
@@ -360,9 +279,7 @@
             {% if user.avatar %}
               <img src="{{ user.avatar.url }}" class="avatar-nav" alt="">
             {% else %}
-              <div class="avatar-placeholder">
-                {{ user.email|first|upper }}
-              </div>
+              <div class="avatar-placeholder">{{ user.email|first|upper }}</div>
             {% endif %}
             <span class="d-none d-lg-inline">{{ user.get_full_name }}</span>
           </a>
@@ -402,8 +319,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="btn-nav-primary nav-link"
-             href="{% url 'accounts:register' %}">
+          <a class="btn-nav-primary nav-link" href="{% url 'accounts:register' %}">
             <i class="bi bi-person-plus me-1"></i>Регистрация
           </a>
         </li>
@@ -413,7 +329,7 @@
   </div>
 </nav>
 
-<!-- ════════════════ MESSAGES ════════════════ -->
+<!-- MESSAGES -->
 {% if messages %}
 <div class="container mt-3">
   {% for message in messages %}
@@ -430,9 +346,32 @@
 </div>
 {% endif %}
 
-<!-- ════════════════ CONTENT ════════════════ -->
+<!-- CONTENT -->
 <main>
   {% block content %}{% endblock %}
 </main>
 
-<!-- ════════════════ FOO
+<!-- FOOTER -->
+<footer>
+  <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
+    <span>
+      <i class="bi bi-house-door-fill me-1"></i>
+      &copy; {% now "Y" %} <strong style="color:rgba(255,255,255,.75)">RentalService</strong>
+    </span>
+    <div class="d-flex gap-3">
+      <a href="{% url 'rentals:item_list' %}">Каталог</a>
+      {% if user.is_authenticated %}
+        <a href="{% url 'rentals:item_create' %}">Добавить объект</a>
+        <a href="{% url 'rentals:my_bookings' %}">Мои брони</a>
+      {% else %}
+        <a href="{% url 'accounts:login' %}">Войти</a>
+        <a href="{% url 'accounts:register' %}">Регистрация</a>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
