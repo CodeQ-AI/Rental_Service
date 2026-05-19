@@ -13,19 +13,38 @@ class AllObjectsManager(models.Manager):
 
 
 class RentalItem(models.Model):
-    owner       = models.ForeignKey(
+
+    PROPERTY_TYPES = [
+        ('apartment', 'Квартира'),
+        ('house',  'Дом'),
+        ('room',   'Комната'),
+        ('office', 'Офис'),
+        ('garage', 'Гараж'),
+        ('other', 'Другое'),
+    ]
+
+    owner  = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='rental_items',
         verbose_name='Владелец'
     )
-    title       = models.CharField(max_length=200, verbose_name='Название')
+    title  = models.CharField(max_length=200, verbose_name='Название')
     description = models.TextField(blank=True, verbose_name='Описание')
-    price       = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена (₸/сутки)')
-    photo       = models.ImageField(upload_to='rentals/', blank=True, null=True, verbose_name='Фото')
-    is_deleted  = models.BooleanField(default=False, verbose_name='Удалён')
-    created_at  = models.DateTimeField(auto_now_add=True)
-    updated_at  = models.DateTimeField(auto_now=True)
+    property_type = models.CharField(
+        max_length=20,
+        choices=PROPERTY_TYPES,
+        default='apartment',
+        verbose_name='Тип недвижимости'
+    )
+    address = models.CharField(max_length=300, blank=True, verbose_name='Адрес')
+    rooms  = models.PositiveSmallIntegerField(blank=True, null=True, verbose_name='Количество комнат')
+    area  = models.DecimalField(max_digits=8, decimal_places=1, blank=True, null=True, verbose_name='Площадь (м²)')
+    price  = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='Цена (₸/сутки)')
+    photo = models.ImageField(upload_to='rentals/', blank=True, null=True, verbose_name='Фото')
+    is_deleted = models.BooleanField(default=False, verbose_name='Удалён')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     objects     = SoftDeleteManager()
     all_objects = AllObjectsManager()
@@ -46,6 +65,17 @@ class RentalItem(models.Model):
         self.is_deleted = False
         self.save(update_fields=['is_deleted'])
 
+    def get_property_type_icon(self):
+        icons = {
+            'apartment': 'bi-building',
+            'house': 'bi-house',
+            'room':  'bi-door-open',
+            'office': 'bi-briefcase',
+            'garage': 'bi-car-front',
+            'other': 'bi-three-dots',
+        }
+        return icons.get(self.property_type, 'bi-house')
+
 
 class Booking(models.Model):
     STATUS_CHOICES = [
@@ -55,23 +85,23 @@ class Booking(models.Model):
         ('completed', 'Завершён'),
     ]
 
-    renter     = models.ForeignKey(
+    renter = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='bookings',
         verbose_name='Арендатор'
     )
-    item       = models.ForeignKey(
+    item = models.ForeignKey(
         RentalItem,
         on_delete=models.CASCADE,
         related_name='bookings',
         verbose_name='Объект аренды'
     )
-    date_start = models.DateField(verbose_name='Дата начала')
-    date_end   = models.DateField(verbose_name='Дата окончания')
-    status     = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Статус')
+    date_start  = models.DateField(verbose_name='Дата начала')
+    date_end    = models.DateField(verbose_name='Дата окончания')
+    status      = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name='Статус')
     total_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name='Итоговая сумма')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at  = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = 'Бронирование'
