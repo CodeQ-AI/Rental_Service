@@ -10,11 +10,10 @@
       <li class="breadcrumb-item active">{{ item.title|truncatechars:40 }}</li>
     </ol>
   </nav>
-
   <div class="row g-4">
     <!-- Фото -->
     <div class="col-lg-7">
-      <div class="card p-0 overflow-hidden" style="border-radius:var(--radius);">
+      <div class="card p-0 overflow-hidden">
         {% if item.photo %}
           <img src="{{ item.photo.url }}" class="w-100"
                style="max-height:460px;object-fit:cover;" alt="{{ item.title }}">
@@ -30,21 +29,59 @@
     <!-- Инфо -->
     <div class="col-lg-5">
       <div class="card h-100 p-4">
-        <h2 class="fw-700 mb-1" style="font-family:'Unbounded',sans-serif;font-size:1.3rem;letter-spacing:-.02em;">
-          {{ item.title }}
-        </h2>
 
-        <div class="d-flex align-items-center gap-2 mb-3 mt-1">
-          <a href="{% url 'accounts:profile' pk=item.owner.pk %}"
-             class="text-muted text-decoration-none" style="font-size:.85rem;">
-            <i class="bi bi-person-circle me-1"></i>{{ item.owner.get_full_name }}
-          </a>
-          <span class="text-muted">·</span>
-          <span class="text-muted" style="font-size:.85rem;">
-            <i class="bi bi-clock me-1"></i>{{ item.created_at|date:"d.m.Y" }}
+        <!-- Тип -->
+        <div class="mb-2">
+          <span class="badge fw-600 px-2 py-1"
+                style="background:#eff6ff;color:var(--primary);font-size:.8rem;border-radius:7px;">
+            <i class="bi {{ item.get_property_type_icon }} me-1"></i>
+            {{ item.get_property_type_display }}
           </span>
         </div>
 
+        <h2 class="fw-700 mb-2" style="font-family:'Unbounded',sans-serif;font-size:1.2rem;letter-spacing:-.02em;">
+          {{ item.title }}
+        </h2>
+
+        <!-- Мета -->
+        <div class="d-flex flex-wrap gap-3 mb-3 text-muted" style="font-size:.83rem;">
+          <span>
+            <i class="bi bi-person-circle me-1"></i>
+            <a href="{% url 'accounts:profile' pk=item.owner.pk %}"
+               class="text-muted text-decoration-none">{{ item.owner.get_full_name }}</a>
+          </span>
+          <span><i class="bi bi-clock me-1"></i>{{ item.created_at|date:"d.m.Y" }}</span>
+        </div>
+
+        <!-- Характеристики -->
+        <div class="row g-2 mb-3">
+          {% if item.address %}
+          <div class="col-12">
+            <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#f8fafc;">
+              <i class="bi bi-geo-alt text-primary"></i>
+              <span style="font-size:.85rem;">{{ item.address }}</span>
+            </div>
+          </div>
+          {% endif %}
+          {% if item.rooms %}
+          <div class="col-6">
+            <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#f8fafc;">
+              <i class="bi bi-door-open text-primary"></i>
+              <span style="font-size:.85rem;">{{ item.rooms }} комн.</span>
+            </div>
+          </div>
+          {% endif %}
+          {% if item.area %}
+          <div class="col-6">
+            <div class="d-flex align-items-center gap-2 p-2 rounded-3" style="background:#f8fafc;">
+              <i class="bi bi-aspect-ratio text-primary"></i>
+              <span style="font-size:.85rem;">{{ item.area }} м²</span>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <!-- Цена -->
         <div class="p-3 mb-3 rounded-3" style="background:#f0f7ff;border:1.5px solid #bfdbfe;">
           <span style="font-family:'Unbounded',sans-serif;font-size:1.6rem;font-weight:700;color:var(--primary);">
             {{ item.price|floatformat:0 }} ₸
@@ -69,13 +106,11 @@
       </div>
     </div>
   </div>
-
   <!-- Форма бронирования -->
   {% if booking_form %}
   <div class="card mt-4 p-4">
-    <h5 class="fw-700 mb-3">
-      <i class="bi bi-calendar-plus me-2 text-primary"></i>Забронировать
-    </h5>
+    <h5 class="fw-700 mb-1"><i class="bi bi-calendar-plus me-2 text-primary"></i>Забронировать</h5>
+    <p class="text-muted small mb-3">Выберите даты — сумма рассчитается автоматически</p>
     <form method="post" novalidate>
       {% csrf_token %}
       <div class="row g-3 align-items-end">
@@ -94,6 +129,11 @@
           {% endif %}
         </div>
         <div class="col-md-4">
+          <!-- Итог -->
+          <div class="p-2 rounded-3 mb-2 text-center" style="background:#f0f7ff;border:1.5px solid #bfdbfe;min-height:42px;">
+            <span class="text-muted small">Итого: </span>
+            <strong id="totalPrice" class="text-primary">—</strong>
+          </div>
           <button type="submit" class="btn btn-primary w-100">
             <i class="bi bi-check-lg me-1"></i>Забронировать
           </button>
@@ -104,6 +144,7 @@
       {% endif %}
     </form>
   </div>
+
   {% elif not user.is_authenticated %}
   <div class="alert alert-info mt-4 d-flex align-items-center gap-2">
     <i class="bi bi-info-circle-fill"></i>
@@ -113,4 +154,27 @@
   {% endif %}
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const price = {{ item.price }};
+  const startInput = document.getElementById('id_date_start');
+  const endInput   = document.getElementById('id_date_end');
+  const totalEl    = document.getElementById('totalPrice');
+
+  function calcTotal() {
+    const s = new Date(startInput.value);
+    const e = new Date(endInput.value);
+    if (startInput.value && endInput.value && e > s) {
+      const days = Math.round((e - s) / 86400000);
+      totalEl.textContent = (days * price).toLocaleString('ru-RU') + ' ₸ (' + days + ' дн.)';
+    } else {
+      totalEl.textContent = '—';
+    }
+  }
+
+  startInput && startInput.addEventListener('change', calcTotal);
+  endInput   && endInput.addEventListener('change',   calcTotal);
+</script>
 {% endblock %}
